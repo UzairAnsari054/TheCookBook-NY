@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.example.thecookbook.category_list.data.local.CategoryDao
 import com.example.thecookbook.category_list.data.local.CategoryDatabase
+import com.example.thecookbook.meal_detail.data.local.MealDetailDao
+import com.example.thecookbook.meal_detail.data.local.MealDetailDatabase
 import com.example.thecookbook.meal_list.data.local.MealDao
 import com.example.thecookbook.meal_list.data.local.MealDatabase
 import dagger.Module
@@ -46,5 +48,22 @@ object DbModule {
     @Provides
     fun provideMealDao(mealDatabase: MealDatabase): MealDao {
         return mealDatabase.getMealDao()
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideMealDetailDatabase(application: Application): MealDetailDatabase {
+        return Room.databaseBuilder(
+            application,
+            MealDetailDatabase::class.java,
+            "meal_detail_db"
+        ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideMealDetailDao(mealDetailDatabase: MealDetailDatabase): MealDetailDao {
+        return mealDetailDatabase.getMealDetailDao()
     }
 }

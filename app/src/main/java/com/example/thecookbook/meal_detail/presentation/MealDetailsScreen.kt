@@ -1,11 +1,11 @@
-package com.example.thecookbook.meal_list.presentation
+package com.example.thecookbook.meal_detail.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,34 +26,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
-import com.example.thecookbook.meal_list.domain.model.Meal
 
 @Composable
-fun MealScreen(
-    category: String,
-    onMealClicked: (String) -> Unit,
+fun MealDetailsScreen(
+    mealId: String,
     modifier: Modifier = Modifier,
-    mealListViewModel: MealListViewModel = hiltViewModel()
+    mealDetailsViewModel: MealDetailsViewModel = hiltViewModel()
 ) {
+
     LaunchedEffect(key1 = true) {
-        mealListViewModel.loadMealList(category)
+        mealDetailsViewModel.loadMealDetails(mealId)
     }
 
-    val mealListState by mealListViewModel.mealList.collectAsState()
+    val mealDetailsState by mealDetailsViewModel.mealDetailState.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
         Text(
-            text = "Meals",
+            text = "Meal Details",
             modifier = Modifier.padding(start = 12.dp),
             style = TextStyle(fontStyle = FontStyle.Italic, fontSize = 28.sp)
         )
@@ -64,55 +60,46 @@ fun MealScreen(
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(mealListState.mealList) { meal ->
-                MealItem(
-                    meal = meal,
-                    onMealClicked = { onMealClicked(it) })
+            items(mealDetailsState.mealDetails) { mealDetail ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = mealDetail.strMeal)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                ) {
+                    Text(text = mealDetail.strCategory)
+                    Text(text = mealDetail.strArea)
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(mealDetail.strMealThumb)
+                        .size(Size.ORIGINAL)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(text = mealDetail.strInstructions)
             }
         }
     }
-}
-
-@Composable
-fun MealItem(
-    modifier: Modifier = Modifier,
-    meal: Meal,
-    onMealClicked: (String) -> Unit
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onMealClicked(meal.idMeal) },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .height(130.dp)
-                .width(130.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(meal.strMealThumb)
-                .size(Size.ORIGINAL)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.width(28.dp))
-
-        Column {
-            Text(
-                text = meal.strMeal,
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.ExtraBold
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun MealScreenPreview(modifier: Modifier = Modifier) {
-    MealState()
 }

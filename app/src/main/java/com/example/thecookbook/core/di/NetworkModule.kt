@@ -4,6 +4,9 @@ import com.example.thecookbook.category_list.data.remote.api.CategoryApi
 import com.example.thecookbook.category_list.data.repository.CategoryRepositoryImpl
 import com.example.thecookbook.category_list.domain.repository.CategoryRepository
 import com.example.thecookbook.core.presentation.utils.Constants.BASE_URL
+import com.example.thecookbook.meal_detail.data.remote.api.MealDetailApi
+import com.example.thecookbook.meal_detail.data.repository.MealDetailsRepositoryImpl
+import com.example.thecookbook.meal_detail.domain.repository.MealDetailsRepository
 import com.example.thecookbook.meal_list.data.remote.api.MealApi
 import com.example.thecookbook.meal_list.data.repository.MealRepositoryImpl
 import com.example.thecookbook.meal_list.domain.repository.MealRepository
@@ -37,6 +40,22 @@ object NetworkModule {
             .baseUrl(BASE_URL)
             .build()
             .create(MealApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMealDetailsApi(): MealDetailApi {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .build()
+            .create(MealDetailApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMealDetailsRepository(mealDetailsRepositoryImpl: MealDetailsRepositoryImpl): MealDetailsRepository {
+        return mealDetailsRepositoryImpl
     }
 
     @Singleton

@@ -2,6 +2,7 @@ package com.example.thecookbook.meal_list.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.thecookbook.core.presentation.utils.Resource
 import com.example.thecookbook.meal_list.domain.usecase.GetMealListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +21,26 @@ class MealListViewModel @Inject constructor(
 
     fun loadMealList(category: String) {
         viewModelScope.launch {
-            _mealListState.update {
-                it.copy(mealList = getMealListUseCase(category))
+            getMealListUseCase(category).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        _mealListState.update {
+                            it.copy(errorMsg = result.errorMsg ?: "")
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _mealListState.update {
+                            it.copy(isMealsLoading = result.isLoading)
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        _mealListState.update {
+                            it.copy(mealList = result.data ?: emptyList())
+                        }
+                    }
+                }
             }
         }
     }

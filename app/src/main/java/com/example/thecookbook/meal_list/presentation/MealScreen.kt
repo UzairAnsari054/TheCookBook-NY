@@ -66,7 +66,6 @@ fun MealScreen(
             }
 
             mealListState.errorMsg.isNotEmpty() -> {
-                // Show error message if there's an error
                 Text(
                     text = mealListState.errorMsg,
                     color = Color.Red,

@@ -1,6 +1,5 @@
-package com.example.thecookbook.ui.theme
+package com.example.thecookbook.core.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

@@ -1,4 +1,4 @@
-package com.example.thecookbook.ui.theme
+package com.example.thecookbook.core.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

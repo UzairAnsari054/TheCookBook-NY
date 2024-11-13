@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -54,51 +55,68 @@ fun MealDetailsScreen(
             style = TextStyle(fontStyle = FontStyle.Italic, fontSize = 28.sp)
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(mealDetailsState.mealDetails) { mealDetail ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(text = mealDetail.strMeal)
-                }
+        when {
+            mealDetailsState.isMealDetailsLoading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
-                ) {
-                    Text(text = mealDetail.strCategory)
-                    Text(text = mealDetail.strArea)
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(mealDetail.strMealThumb)
-                        .size(Size.ORIGINAL)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
+            mealDetailsState.errorMsg.isNotEmpty() -> {
+                Text(
+                    text = mealDetailsState.errorMsg,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))
+            mealDetailsState.mealDetails.isNotEmpty() -> {
 
-                Text(text = mealDetail.strInstructions)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(mealDetailsState.mealDetails) { mealDetail ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = mealDetail.strMeal)
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                        ) {
+                            Text(text = mealDetail.strCategory)
+                            Text(text = mealDetail.strArea)
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(mealDetail.strMealThumb)
+                                .size(Size.ORIGINAL)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(text = mealDetail.strInstructions)
+                    }
+                }
             }
         }
     }

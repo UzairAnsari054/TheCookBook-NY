@@ -1,7 +1,6 @@
-package com.example.thecookbook.category_list.presentation
+package com.example.thecookbook.meal_list.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,23 +36,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
-import com.example.thecookbook.category_list.domain.model.Category
+import com.example.thecookbook.meal_list.domain.model.Meal
 
 @Composable
-fun CategoryScreen(
+fun MealScreen(
+    category: String,
     modifier: Modifier = Modifier,
-    onCategoryClicked: (String) -> Unit,
-    categoryViewModel: CategoryViewModel = hiltViewModel()
+    mealListViewModel: MealListViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        categoryViewModel.loadCategories()
+        mealListViewModel.loadMealList(category)
     }
 
-    val categoriesState by categoryViewModel.categoriesState.collectAsState()
+    val mealListState by mealListViewModel.mealList.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
         Text(
-            text = "Categories",
+            text = "Meals",
             modifier = Modifier.padding(start = 12.dp),
             style = TextStyle(fontStyle = FontStyle.Italic, fontSize = 28.sp)
         )
@@ -63,35 +63,30 @@ fun CategoryScreen(
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(categoriesState.categories) { category ->
-                CategoryItem(
-                    category = category,
-                    onCategoryClicked = { onCategoryClicked(it) })
+            items(mealListState.mealList) { meal ->
+                MealItem(meal = meal)
             }
         }
     }
 }
 
 @Composable
-fun CategoryItem(
+fun MealItem(
     modifier: Modifier = Modifier,
-    category: Category,
-    onCategoryClicked: (String) -> Unit
+    meal: Meal
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onCategoryClicked(category.strCategory) },
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
             modifier = Modifier
-                .fillMaxHeight()
+                .height(130.dp)
                 .width(130.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colorScheme.primaryContainer),
             model = ImageRequest.Builder(LocalContext.current)
-                .data(category.strCategoryThumb)
+                .data(meal.strMealThumb)
                 .size(Size.ORIGINAL)
                 .build(),
             contentDescription = null,
@@ -102,7 +97,7 @@ fun CategoryItem(
 
         Column {
             Text(
-                text = category.strCategory,
+                text = meal.strMeal,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.ExtraBold
             )
@@ -112,6 +107,6 @@ fun CategoryItem(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun CategoryScreenPreview(modifier: Modifier = Modifier) {
-    CategoryScreen(onCategoryClicked = {})
+fun MealScreenPreview(modifier: Modifier = Modifier) {
+    MealState()
 }

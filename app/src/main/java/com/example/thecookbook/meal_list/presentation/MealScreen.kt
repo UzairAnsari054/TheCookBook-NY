@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -58,16 +60,33 @@ fun MealScreen(
             style = TextStyle(fontStyle = FontStyle.Italic, fontSize = 28.sp)
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(mealListState.mealList) { meal ->
-                MealItem(
-                    meal = meal,
-                    onMealClicked = { onMealClicked(it) })
+        when {
+            mealListState.isMealsLoading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+
+            mealListState.errorMsg.isNotEmpty() -> {
+                // Show error message if there's an error
+                Text(
+                    text = mealListState.errorMsg,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+
+            mealListState.mealList.isNotEmpty() -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(mealListState.mealList) { meal ->
+                        MealItem(
+                            meal = meal,
+                            onMealClicked = { onMealClicked(it) })
+                    }
+                }
             }
         }
     }

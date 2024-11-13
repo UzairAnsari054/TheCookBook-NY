@@ -24,15 +24,14 @@ class CategoryRepositoryImpl @Inject constructor(
                 val categoryEntities = categoryApi.getCategories().categories.map { it.toCategoryEntity() }
                 categoryDao.saveCategories(categoryEntities)
 
-                val categories = categoryDao.getCategories().map { it.toCategory() }
-                emit(Resource.Success(data = categories))
+                val cachedCategories = categoryDao.getCategories().map { it.toCategory() }
+                emit(Resource.Success(data = cachedCategories))
             } catch (e: Exception) {
                 e.printStackTrace()
 
                 val cachedCategories = categoryDao.getCategories().map { it.toCategory() }
                 if (cachedCategories.isNotEmpty()) {
                     emit(Resource.Success(data = cachedCategories))
-                    emit(Resource.Loading(false))
                 } else {
                     emit(Resource.Error(errorMsg = "Failed to load categories, No network and no cached data"))
                 }

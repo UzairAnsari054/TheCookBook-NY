@@ -3,5 +3,7 @@ package com.example.thecookbook.meal_list.presentation
 import com.example.thecookbook.meal_list.domain.model.Meal
 
 data class MealState(
-    val mealList: List<Meal> = emptyList()
+    val mealList: List<Meal> = emptyList(),
+    val errorMsg: String = "",
+    val isMealsLoading: Boolean = false
 )

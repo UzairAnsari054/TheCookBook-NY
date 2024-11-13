@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.thecookbook.category_list.presentation.CategoryScreen
 import com.example.thecookbook.core.presentation.ui.theme.TheCookBookTheme
+import com.example.thecookbook.meal_detail.presentation.MealDetailsScreen
 import com.example.thecookbook.meal_list.presentation.MealScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,7 +51,15 @@ fun Navigation(modifier: Modifier = Modifier) {
 
         composable<Screen.MealScreen> { backStackEntry ->
             val mealScreen = backStackEntry.toRoute<Screen.MealScreen>()
-            MealScreen(category = mealScreen.category)
+            MealScreen(
+                category = mealScreen.category,
+                onMealClicked = { navController.navigate(Screen.MealDetailsScreen(mealId = it)) }
+            )
+        }
+
+        composable<Screen.MealDetailsScreen> { backStackEntry ->
+            val mealDetailScreen = backStackEntry.toRoute<Screen.MealDetailsScreen>()
+            MealDetailsScreen(mealId = mealDetailScreen.mealId)
         }
     }
 }
